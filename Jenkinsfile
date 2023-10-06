@@ -1,14 +1,27 @@
 pipeline {
-    agent any
+    agent {
+      docker {
+          image 'node:20'
+          args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
     stages {
+      stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Install Dependencies') {
+            sh 'npm install'
+        }
         stage('Build') {
             steps {
-                echo 'Building..'
+              sh "npm run test"
             }
         }
         stage('Test') {
             steps {
-                echo 'Testing..'
+              sh "npm run test"
             }
         }
         stage('Deploy') {
@@ -16,5 +29,13 @@ pipeline {
                 echo 'Deploying....'
             }
         }
+        post {
+          success {
+              echo 'The build was successful!'
+          }
+          failure {
+              echo 'The build failed :('
+          }
+      }
     }
 }
