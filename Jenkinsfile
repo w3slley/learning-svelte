@@ -1,9 +1,11 @@
 pipeline {
-    agent {
-      docker {
-          image 'node:20'
-        }
+    agent any
+    
+    environment {
+        // Set the PATH to include the location where npm is installed.
+        PATH = "${tool 'Node.js'}/bin:${env.PATH}"
     }
+    
     stages {
       stage('Checkout') {
             steps {
